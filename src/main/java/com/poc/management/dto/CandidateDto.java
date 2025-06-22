@@ -1,6 +1,7 @@
 package com.poc.management.dto;
 
 import com.poc.management.annotations.LegalAge;
+import com.poc.management.enums.JoiningType;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -27,4 +28,6 @@ public class CandidateDto {
     @LegalAge
     private LocalDate dob;
     private List<Long> positionId;
+    private Long genderId;
+    private JoiningType joiningType;
 }

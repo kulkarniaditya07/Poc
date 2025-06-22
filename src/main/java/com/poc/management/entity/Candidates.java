@@ -1,6 +1,7 @@
 package com.poc.management.entity;
 
 import com.poc.management.annotations.LegalAge;
+import com.poc.management.enums.JoiningType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -39,4 +40,10 @@ public class Candidates {
     )
     private List<Positions> positions;
 
+
+    @OneToOne
+    private Gender gender;
+
+    @Enumerated(value = EnumType.STRING)
+    private JoiningType joiningType;
 }

@@ -3,9 +3,11 @@ package com.poc.management.service.impl;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.poc.management.dto.CandidateDto;
 import com.poc.management.entity.Candidates;
+import com.poc.management.entity.Gender;
 import com.poc.management.entity.Positions;
 import com.poc.management.exceptions.RestApiException;
 import com.poc.management.repository.CandidateRepository;
+import com.poc.management.repository.GenderRepository;
 import com.poc.management.repository.PositionRepository;
 import com.poc.management.service.CandidateService;
 import com.poc.management.util.PagableObject;
@@ -24,6 +26,8 @@ import java.util.function.Consumer;
 @Service
 @AllArgsConstructor
 public class CandidateServiceImpl implements CandidateService {
+
+    private final GenderRepository genderRepository;
     private final PositionRepository positionRepository;
     private final CandidateRepository candidateRepository;
     private PagableObject pagableObject;
@@ -58,13 +62,48 @@ public class CandidateServiceImpl implements CandidateService {
         Map<String, Consumer<List<Positions>>> positionFieldUpdaters=Map.of(
                 "positionId",candidates::setPositions
         );
+
+        Map<String, Consumer<Gender>> genderFieldUpdaters=Map.of(
+                "genderId", candidates::setGender
+        );
+
         updateStringFieldsIfPresentString(stringFieldUpdaters,jsonNode,request);
         updateLocalDateFieldsIfPresent(localDateFieldUpdaters,jsonNode,request);
         updatePositionFieldsIfPresent(positionFieldUpdaters,jsonNode,request);
+        updateGenderFieldsIfPresent(genderFieldUpdaters, jsonNode, request);
 
         candidateRepository.saveAndFlush(candidates);
         return ResponseUtil.getResponseMessage("Candidate Updated Successfully");
     }
+
+
+
+    private void updateGenderFieldsIfPresent(Map<String, Consumer<Gender>> genderFieldUpdaters,
+                                             JsonNode jsonNode,
+                                             CandidateDto request) {
+        genderFieldUpdaters.forEach((fieldName, fieldSetter) -> {
+            if (jsonNode.has(fieldName)) {
+                Long genderId = getGenderFromRequest(fieldName, request);
+                updateFieldIfGenderPresent(genderId, fieldSetter);
+            }
+        });
+    }
+
+    private void updateFieldIfGenderPresent(Long genderId, Consumer<Gender> fieldSetter) {
+        if (genderId != null) {
+            Gender gender = genderRepository.findById(genderId)
+                    .orElseThrow(() -> new RestApiException(String.format("Gender with id: %s not found",genderId),HttpStatus.NOT_FOUND));
+            fieldSetter.accept(gender);
+        }
+    }
+
+    private Long getGenderFromRequest(String fieldName, CandidateDto request) {
+        return switch (fieldName) {
+            case "gender" -> request.getGenderId();
+            default -> null;
+        };
+    }
+
 
     private void updatePositionFieldsIfPresent(Map<String, Consumer<List<Positions>>> positionFieldUpdaters,
                                                JsonNode jsonNode, CandidateDto request) {
