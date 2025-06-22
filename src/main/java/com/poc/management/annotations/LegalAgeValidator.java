@@ -16,6 +16,6 @@ public class LegalAgeValidator implements ConstraintValidator<LegalAge,LocalDate
     @Override
     public boolean isValid(LocalDate value, ConstraintValidatorContext context) {
         if(value==null) return false;
-        return value.getYear()>=18;
+        return Period.between(value, LocalDate.now()).getYears() >= 18;
     }
 }

@@ -1,5 +1,6 @@
 package com.poc.management.annotations;
 
+import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 import org.springframework.validation.annotation.Validated;
 
@@ -8,7 +9,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Validated(LegalAge.class)
+@Constraint(validatedBy = LegalAgeValidator.class)
 @Target(value = ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface LegalAge {

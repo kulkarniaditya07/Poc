@@ -3,8 +3,8 @@ package com.poc.management.entity;
 import com.poc.management.annotations.LegalAge;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -26,11 +26,9 @@ public class Candidates {
     private String name;
 
     @Column(unique = true, nullable = false)
-    @Email(message = "Provide valid email", regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")
     private String email;
 
     @Column(nullable = false)
-    @LegalAge
     private LocalDate dob;
 
     @ManyToMany

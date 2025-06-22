@@ -20,7 +20,5 @@ public class Positions {
     @NotBlank(message = "Position Name is required")
     private String positionName;
 
-//    @ManyToOne
-//    private Candidates candidates;
 
 }
