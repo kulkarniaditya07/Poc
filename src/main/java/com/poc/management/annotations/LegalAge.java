@@ -1,0 +1,20 @@
+package com.poc.management.annotations;
+
+import jakarta.validation.Payload;
+import org.springframework.validation.annotation.Validated;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+@Validated(LegalAge.class)
+@Target(value = ElementType.FIELD)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface LegalAge {
+    String message() default "Age must be greater than 18 years";
+
+    Class<?>[] groups() default {};
+
+    Class<? extends Payload>[] payload() default {};
+}
