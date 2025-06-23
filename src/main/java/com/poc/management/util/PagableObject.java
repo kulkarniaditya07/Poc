@@ -22,10 +22,6 @@ public class PagableObject {
     private final ObjectMapper objectMapper;
     private final Validator validator;
 
-    @PostConstruct
-    public void init() {
-        modelMapper.getConfiguration().setSkipNullEnabled(true);
-    }
 
 
     public <S,T> T map (S source, Class<T> target){
