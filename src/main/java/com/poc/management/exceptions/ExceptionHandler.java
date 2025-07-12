@@ -6,12 +6,14 @@ import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class ExceptionHandler {
@@ -52,5 +54,23 @@ public class ExceptionHandler {
                 .errors(request.getDescription(false))
                 .build(), HttpStatus.BAD_REQUEST);
 
+    }
+
+
+    @org.springframework.web.bind.annotation.ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<RestApiResponse<Object>> handleMethodArgumentNotValidException(
+            MethodArgumentNotValidException ex, WebRequest request) {
+
+        List<String> errors = ex.getBindingResult()
+                .getFieldErrors()
+                .stream()
+                .map(error -> error.getField() + ": " + error.getDefaultMessage())
+                .collect(Collectors.toList());
+
+        return new ResponseEntity<>(RestApiResponse.builder()
+                .message(errors)
+                .errors(request.getDescription(false))
+                .timestamp(LocalDate.now())
+                .build(), HttpStatus.BAD_REQUEST);
     }
 }

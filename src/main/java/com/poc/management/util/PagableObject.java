@@ -22,8 +22,6 @@ public class PagableObject {
     private final ObjectMapper objectMapper;
     private final Validator validator;
 
-
-
     public <S,T> T map (S source, Class<T> target){
         return modelMapper.map(source,target);
     }

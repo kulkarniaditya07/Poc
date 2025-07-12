@@ -14,6 +14,9 @@ import com.poc.management.util.PagableObject;
 import com.poc.management.util.ResponseUtil;
 import com.poc.management.util.RestApiResponse;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -47,7 +50,7 @@ public class CandidateServiceImpl implements CandidateService {
     @Override
     public RestApiResponse<String> updateCandidate(Long id, String candidateDto) {
         CandidateDto request = pagableObject.readValue(candidateDto, CandidateDto.class);
-        pagableObject.validate(request);
+
         JsonNode jsonNode = pagableObject.getJsonNode(candidateDto);
         Candidates candidates = findBy(id);
         Map<String, Consumer<String>> stringFieldUpdaters=Map.of(
@@ -71,9 +74,28 @@ public class CandidateServiceImpl implements CandidateService {
         updateLocalDateFieldsIfPresent(localDateFieldUpdaters,jsonNode,request);
         updatePositionFieldsIfPresent(positionFieldUpdaters,jsonNode,request);
         updateGenderFieldsIfPresent(genderFieldUpdaters, jsonNode, request);
-
+        pagableObject.validate(candidates);
         candidateRepository.saveAndFlush(candidates);
         return ResponseUtil.getResponseMessage("Candidate Updated Successfully");
+    }
+
+    @Override
+    public RestApiResponse<Page<CandidateDto>> getAllCandidate(Pageable pageable) {
+        Page<Candidates> candidatesPage = candidateRepository.findAll(pageable);
+        List<CandidateDto> candidateDtos= pagableObject.mapListToClass(candidatesPage.getContent(),CandidateDto.class);
+        Page<CandidateDto> pagedCandidateDto= new PageImpl<>(candidateDtos,pageable, candidatesPage.getTotalPages());
+        return ResponseUtil.getResponse(pagedCandidateDto,"Candidate");
+    }
+
+    @Override
+    public RestApiResponse<String> deleteCandidate(Long id) {
+        return ResponseUtil.getResponseMessage(
+                candidateRepository.findById(id).map(candidate -> {
+                    candidateRepository.delete(candidate);
+                    return "Candidate deleted successfully";
+                }).orElseThrow(() ->
+                        new RestApiException(String.format("Candidate with id %s not found", id), HttpStatus.NOT_FOUND))
+        );
     }
 
 

@@ -27,9 +27,11 @@ public class Candidates {
     private String name;
 
     @Column(unique = true, nullable = false)
+    @Email(message = "Provide valid email", regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")
     private String email;
 
     @Column(nullable = false)
+    @LegalAge
     private LocalDate dob;
 
     @ManyToMany
@@ -41,7 +43,8 @@ public class Candidates {
     private List<Positions> positions;
 
 
-    @OneToOne
+    @ManyToOne
+    @JoinColumn(name = "gender_id")
     private Gender gender;
 
     @Enumerated(value = EnumType.STRING)
