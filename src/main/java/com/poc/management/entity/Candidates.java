@@ -4,7 +4,6 @@ import com.poc.management.annotations.LegalAge;
 import com.poc.management.enums.JoiningType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 import java.time.LocalDate;

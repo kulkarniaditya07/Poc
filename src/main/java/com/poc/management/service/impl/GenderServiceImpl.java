@@ -1,6 +1,5 @@
 package com.poc.management.service.impl;
 
-import com.poc.management.dto.CandidateDto;
 import com.poc.management.dto.GenderDto;
 import com.poc.management.entity.Gender;
 import com.poc.management.exceptions.RestApiException;

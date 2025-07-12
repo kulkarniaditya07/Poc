@@ -2,7 +2,6 @@ package com.poc.management.annotations;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
-import org.springframework.validation.annotation.Validated;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
