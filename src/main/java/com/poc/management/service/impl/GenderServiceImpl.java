@@ -3,6 +3,7 @@ package com.poc.management.service.impl;
 import com.poc.management.dto.CandidateDto;
 import com.poc.management.dto.GenderDto;
 import com.poc.management.entity.Gender;
+import com.poc.management.exceptions.RestApiException;
 import com.poc.management.repository.GenderRepository;
 import com.poc.management.service.GenderService;
 import com.poc.management.util.PagableObject;
@@ -12,6 +13,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -37,4 +39,20 @@ public class GenderServiceImpl implements GenderService {
         Page<GenderDto> pagedCandidateDto= new PageImpl<>(genderDtos,pageable, genderPage.getTotalPages());
         return ResponseUtil.getResponse(pagedCandidateDto,"Genders");
     }
+
+    @Override
+    public RestApiResponse<String> removeGender(Long id) {
+        return ResponseUtil.getResponseMessage(
+                genderRepository.findById(id).map(candidate -> {
+                    genderRepository.delete(candidate);
+                    return "Gender deleted successfully";
+                }).orElseThrow(() ->
+                        new RestApiException(String.format("Gender with id %s not found", id), HttpStatus.NOT_FOUND))
+        );
+    }
+
+
+
+
+
 }

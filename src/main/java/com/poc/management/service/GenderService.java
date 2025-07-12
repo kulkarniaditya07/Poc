@@ -9,4 +9,6 @@ public interface GenderService {
     RestApiResponse<GenderDto> createGender(GenderDto genderDto);
 
     RestApiResponse<Page<GenderDto>> getGenders(Pageable pageable);
+
+    RestApiResponse<String> removeGender(Long id);
 }
